@@ -83,6 +83,9 @@ def main():
 
     clock = pg.time.Clock()
     tmr = 0
+    
+    bb_imgs, bb_accs = create_bomb_list()
+
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT: 
@@ -113,7 +116,16 @@ def main():
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
 
         screen.blit(kk_img, kk_rct)
-        bb_rct.move_ip(vx, vy)  # 爆弾を移動させる
+
+        avx = vx * bb_accs[min(tmr//500, 9)]
+        avy = vy * bb_accs[min(tmr//500, 9)] #爆弾速度
+        
+        bb_img = bb_imgs[min(tmr//500, 9)]
+        bb_rct.move_ip(avx, avy)
+        
+        bb_rct.width = bb_img.get_width()   
+        bb_rct.height = bb_img.get_height()
+
         yoko, tate = check_bound(bb_rct)
         if not yoko:  # 横方向の判定
             vx *= -1
