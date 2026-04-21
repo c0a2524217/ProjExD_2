@@ -61,6 +61,45 @@ def create_bomb_list():
     return bb_imgs, bb_accs
 
 
+def create_kk_imgs():
+    img = pg.image.load("fig/3.png")
+
+    kk_imgs = {
+        (0, 0): pg.transform.rotozoom(img, 0, 0.9),   # 正面
+
+        (5, 0): pg.transform.flip(
+            pg.transform.rotozoom(img, 0, 0.9),
+            True, False
+        ),  # 右
+
+        (-5, 0): pg.transform.rotozoom(img, 0, 0.9),  # 左
+
+        (0, -5): pg.transform.rotozoom(img, -90, 0.9), # 上
+
+        (0, 5): pg.transform.flip(
+            pg.transform.rotozoom(img, 90, 0.9),
+            True, False
+        ),  # 下
+
+        # ■ ここから斜め
+        (5, -5): pg.transform.flip(
+            pg.transform.rotozoom(img, -45, 0.9),
+            True, False
+        ),  # 右上
+
+        (5, 5): pg.transform.flip(
+            pg.transform.rotozoom(img, 45, 0.9),
+            True, False
+        ),  # 右下
+
+        (-5, -5): pg.transform.rotozoom(img, -45, 0.9),  # 左上
+
+        (-5, 5): pg.transform.rotozoom(img, 45, 0.9),     # 左下
+    }
+
+    return kk_imgs
+
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -85,6 +124,8 @@ def main():
     tmr = 0
     
     bb_imgs, bb_accs = create_bomb_list()
+
+    kk_imgs = create_kk_imgs()
 
     while True:
         for event in pg.event.get():
@@ -114,6 +155,10 @@ def main():
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True, True):  # 画面外だったら
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
+
+        mv = (sum_mv[0], sum_mv[1]) # 画像切り替え
+        if mv in kk_imgs:
+            kk_img = kk_imgs[mv]
 
         screen.blit(kk_img, kk_rct)
 
