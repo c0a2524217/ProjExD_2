@@ -1,6 +1,7 @@
 import os
 import sys
 import random
+import time
 import pygame as pg
 
 
@@ -28,6 +29,38 @@ def check_bound(rct: pg.Rect) -> tuple[bool, bool]:
     return yoko, tate
 
 
+# ゲームオーバー
+def gameover(screen: pg.Surface) -> None:
+    overlay = pg.Surface((WIDTH, HEIGHT))
+    overlay.fill((0, 0, 0))
+    overlay.set_alpha(200)
+
+    font = pg.font.Font(None, 80)
+    txt = font.render("Game Over", True, (255, 255, 255))
+    overlay.blit(txt, (WIDTH//2 - 120, HEIGHT//2 - 40))
+
+    go_img = pg.transform.rotozoom(pg.image.load("fig/8.png"), 0, 0.9)
+    overlay.blit(go_img, (WIDTH//2 - 200, HEIGHT//2 - 50))
+    overlay.blit(go_img, (WIDTH//2 + 200, HEIGHT//2 - 50))
+
+    screen.blit(overlay, (0, 0))
+    pg.display.update()
+    time.sleep(5)
+
+
+def create_bomb_list():
+    bb_imgs = []
+    for r in range(1, 11):
+        bb_img = pg.Surface((20*r, 20*r))
+        pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)
+        bb_img.set_colorkey((0, 0, 0))
+        bb_imgs.append(bb_img)
+
+    bb_accs = [a for a in range(1, 11)]
+
+    return bb_imgs, bb_accs
+
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -35,6 +68,10 @@ def main():
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
+
+    font = pg.font.Font(None, 80)
+    go_img = pg.transform.rotozoom(pg.image.load("fig/8.png"), 0, 0.9)  
+    overlay = pg.Surface((WIDTH, HEIGHT)) # ゲームオーバー画面
     
     bb_img = pg.Surface((20, 20))
     pg.draw.circle(bb_img, (255, 0, 0), (10, 10), 10)
@@ -51,9 +88,10 @@ def main():
             if event.type == pg.QUIT: 
                 return
             
-        if kk_rct.colliderect(bb_rct):  # こうかとんと爆弾の衝突判定
-            print("ゲームオーバー")
-            return  # ゲームオーバーの意味でmain関数から出る
+        if kk_rct.colliderect(bb_rct):
+            gameover(screen)
+            return
+        
         screen.blit(bg_img, [0, 0]) 
 
         key_lst = pg.key.get_pressed()
