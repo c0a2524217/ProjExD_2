@@ -31,6 +31,9 @@ def check_bound(rct: pg.Rect) -> tuple[bool, bool]:
 
 # ゲームオーバー
 def gameover(screen: pg.Surface) -> None:
+    """
+    ゲームオーバー画面の描写の関数
+    """
     overlay = pg.Surface((WIDTH, HEIGHT))
     overlay.fill((0, 0, 0))
     overlay.set_alpha(200)
@@ -49,6 +52,10 @@ def gameover(screen: pg.Surface) -> None:
 
 
 def create_bomb_list():
+    """
+    爆弾の大きさ違いSurfaceリストと加速度リスト
+    戻り値：(爆弾Surfaceリスト, 加速度リスト)
+    """
     bb_imgs = []
     for r in range(1, 11):
         bb_img = pg.Surface((20*r, 20*r))
